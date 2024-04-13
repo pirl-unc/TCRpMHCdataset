@@ -1,3 +1,8 @@
+[![Tests](https://github.com/pirl-unc/TCRpMHCdataset/actions/workflows/tests.yml/badge.svg)](https://github.com/pirl-unc/TCRpMHCdataset/actions/workflows/tests.yml)
+[![Coverage Status](https://coveralls.io/repos/github/pirl-unc/TCRpMHCdataset/badge.svg?branch=main)](https://coveralls.io/github/pirl-unc/TCRpMHCdataset?branch=main)
+<a href="https://pypi.python.org/pypi/tcrpmhcdataset/">
+<img src="https://img.shields.io/pypi/v/tcrpmhcdataset.svg?maxAge=1000" alt="PyPI" />
+</a>
 
 
 # TCRpMHCdataset
@@ -86,7 +91,7 @@ T-cell Receptors (TCRs) are highly specific pattern recognition receptors that a
 
 ----------------------------------------------------------------------
 
-See the [documentation](https://tcrpmhcdataset.readthedocs.io/en/latest/) for more information.
+See the [documentation](https://pirl-unc.github.io/TCRpMHCdataset/tcrpmhcdataset.html) for more information.
 
 #### TCRpMHCdataset
 

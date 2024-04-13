@@ -37,3 +37,4 @@ tcrpmhcdataset = ["refs/*.csv"]
 [project.urls]
 "Homepage" = "https://github.com/pirl-unc/TCRpMHCdataset"
 "Bug Tracker" = "https://github.com/pirl-unc/TCRpMHCdataset/issues"
+"Documentation" = "https://pirl-unc.github.io/TCRpMHCdataset/tcrpmhcdataset.html"
