@@ -1,13 +1,4 @@
-[![Tests](https://github.com/pirl-unc/TCRpMHCdataset/actions/workflows/tests.yml/badge.svg)](https://github.com/pirl-unc/TCRp/actions/workflows/tests.yml)
-<a href="https://coveralls.io/github/til-unc/mhcgnomes">
-<img src="https://coveralls.io/repos/github/til-unc/mhcgnomes/badge.svg?branch=main" alt="Coverage Status">
-</a>
-[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-<a href="https://pypi.python.org/pypi/mhcgnomes/">
- <img src="https://img.shields.io/pypi/v/mhcgnomes.svg?maxAge=1000" alt="PyPI" />
-</a>
 
-![](https://raw.githubusercontent.com/til-unc/mhcgnomes/main/gnome-red-text.png)
 
 # TCRpMHCdataset
 
@@ -109,7 +100,7 @@ The TCR object is a frozen dataclass object that stores information such as the 
 
 Like the TCR's implementation, each pMHC object similarly contains key information including the 'peptide', 'allele' but also includes a set of TCRs that are reactive against it as well as a set of references that support the pMHC. It also computes the full HLA-sequence as well as the pseudosequence and caches these for future reference. 
 
-MHC Sequence
+*MHC Sequence*
 
 Major Histocompatibility Complex (MHC) sequences are mapped using the parsed allele level information using the [IMGT HLA]() database. MHC proteins are sometimes annotated with mutations in relation to a known allele:
 
@@ -117,11 +108,11 @@ Major Histocompatibility Complex (MHC) sequences are mapped using the parsed all
 
 If picked up by `mhcgnomes` These are passed in to the pMHC object which makes the necessary changes to the sequence and caches the new sequence for future reference.
 
-Pseudo Sequence
+*Pseudo Sequence*
 
 Pseudosequences are derived from the full MHC sequence that are predicted to be in contact with the peptide given proximity and a polymorphism based estimator (Introduced in [netMHCpan](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0000796#s4)). All pseudo-sequenes are 34 Amino Acids long and are used in different immuno-informatics pipelines as a reduced representation of the full MHC seqeunce. In this package, the pseudo-sequences are mapped from allele level information, similar to MHC sequences. They are not updated given a mutation, but instead use the canonical allele's pseudo-sequence, if available.
 
-Allele Imputation strategy
+*Allele Imputation strategy*
 
 Given the sparsity of the data, every single datapoint is of critical importance. In the event that only the serotype information was provided (e.g. HLA-A2), an "eager" imputation strategy is included to try and impute a common allele (e.g. HLA-A\*02:01). This is done in a rudimentary manner by guessing the allele field from :01 -> :10 and seeing if there exists an MHC sequence from IMGT that matches the allele. This strategy should ONLY be used if using pseudosequence level information as the pseudosequence often is highly conserved within serotype. 
 
