@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tcrpmhcdataset"
+version = "0.1.0"
+requires-python = ">=3.7"
+authors = [
+    {name="Dhuvi Karthikeyan", email="dkarthikeyan@berkeley.edu" }
+]
+description = "Handling Many-to-many TCR::Peptide-MHC Data"
+keywords = [
+    "immunoinformatics", "T-cell Receptor", "machine learning", "bioinformatics", "peptide-MHC", "TCR", "immunology", "data handling",
+]
+classifiers = [
+    "Programming Language :: Python :: Implementation :: CPython",
+    'Environment :: Console',
+    'Operating System :: OS Independent',
+    'Intended Audience :: Science/Research',
+    'License :: OSI Approved :: Apache Software License',
+    'Topic :: Scientific/Engineering :: Bio-Informatics',
+]
+readme = "README.md"
+dynamic = ["dependencies"]
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
+
+[tool.setuptools]
+include-package-data = true
+packages = {find = {where = ["refs"]}}
+
+[tool.setuptools.package-data]
+tcrpmhcdataset = ["refs/*.csv"]
+
+[project.urls]
+"Homepage" = "https://github.com/pirl-unc/TCRpMHCdataset"
+"Bug Tracker" = "https://github.com/pirl-unc/TCRpMHCdataset/issues"
