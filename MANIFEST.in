@@ -1,1 +1,3 @@
-include refs/*.csv
+include tcrpmhcdataset/refs/*.csv
+include README.md
+include requirements.txt

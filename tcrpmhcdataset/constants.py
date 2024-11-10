@@ -15,13 +15,16 @@ Keep biological constants here.
 """
 import os
 import pandas as pd
+from importlib import resources
+import importlib.resources as pkg_resources
 
-# Get the directory of the current file (constants.py)
-_current_dir = os.path.dirname(os.path.abspath(__file__))
+def get_resource_path(filename):
+    with pkg_resources.path('tcrpmhcdataset.refs', filename) as path:
+        return str(path)
 
-# Construct the absolute path to the 'refs' directory
-_refs_dir = os.path.join(_current_dir, '..', 'refs')
-
-HLA_SEQUENCE_MAP = pd.read_csv(os.path.join(_refs_dir, '2field_hla_consensus_seqs.csv'), index_col=0).to_dict()["Full Sequence"]
-HLA_PSEUDO_MAP = pd.read_csv(os.path.join(_refs_dir, 'hla_pseudo_seqs.csv'), index_col=0).to_dict()["pseudo-sequence"]
-AA_VOCABULARY = ["A", "C", "D", "E", "F", "G", "H", "I", "K", "L", "M", "N", "P", "Q", "R", "S", "T", "V", "W", "Y"]
+HLA_SEQUENCE_MAP = pd.read_csv(get_resource_path('2field_hla_consensus_seqs.csv'), 
+                              index_col=0).to_dict()["Full Sequence"]
+HLA_PSEUDO_MAP = pd.read_csv(get_resource_path('hla_pseudo_seqs.csv'), 
+                            index_col=0).to_dict()["pseudo-sequence"]
+AA_VOCABULARY = ["A", "C", "D", "E", "F", "G", "H", "I", "K", "L", 
+                "M", "N", "P", "Q", "R", "S", "T", "V", "W", "Y"]

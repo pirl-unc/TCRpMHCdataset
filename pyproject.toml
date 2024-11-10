@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tcrpmhcdataset"
-version = "0.1.0"
+version = "0.1.2"
 requires-python = ">=3.7"
 authors = [
     {name="Dhuvi Karthikeyan", email="dkarthikeyan@berkeley.edu" }
@@ -29,10 +29,7 @@ dependencies = {file = ["requirements.txt"]}
 
 [tool.setuptools]
 include-package-data = true
-packages = {find = {where = ["tcrpmhcdataset"]}}
-
-[tool.setuptools.package-data]
-tcrpmhcdataset = ["../refs/*.csv"]
+packages = ["tcrpmhcdataset"]
 
 [project.urls]
 "Homepage" = "https://github.com/pirl-unc/TCRpMHCdataset"
