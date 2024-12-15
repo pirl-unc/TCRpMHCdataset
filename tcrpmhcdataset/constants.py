@@ -21,6 +21,10 @@ import importlib.resources as pkg_resources
 def get_resource_path(filename):
     with pkg_resources.path('tcrpmhcdataset.refs', filename) as path:
         return str(path)
+    # Try this if the first one doesn't work
+    with pkg_resources.files("tcrpmhcdataset.refs").joinpath(filename) as path2:
+        return str(path2)
+    
 
 HLA_SEQUENCE_MAP = pd.read_csv(get_resource_path('2field_hla_consensus_seqs.csv'), 
                               index_col=0).to_dict()["Full Sequence"]
