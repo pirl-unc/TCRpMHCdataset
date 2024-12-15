@@ -3,7 +3,7 @@
 ###############################################################################
 
 # Import custom classes
-from tcrpmhcdataset.dataset import *
+from tcrpmhcdataset.dataset import TCRpMHCdataset, TCR, pMHC
 import pytest
 import os
 import pandas as pd
