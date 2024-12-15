@@ -31,6 +31,9 @@ dependencies = {file = ["requirements.txt"]}
 include-package-data = true
 packages = ["tcrpmhcdataset"]
 
+[tool.setuptools.package-data]
+"tcrpmhcdataset" = ["refs/*.csv"]
+
 [project.urls]
 "Homepage" = "https://github.com/pirl-unc/TCRpMHCdataset"
 "Bug Tracker" = "https://github.com/pirl-unc/TCRpMHCdataset/issues"

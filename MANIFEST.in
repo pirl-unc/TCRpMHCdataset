@@ -1,3 +1,4 @@
 include tcrpmhcdataset/refs/*.csv
+recursive-include tcrpmhcdataset/refs *.csv
 include README.md
 include requirements.txt
