@@ -14,7 +14,7 @@
 """
 The purpose of this python3 script is to implement the TCRpMHCdataset class.
 """
-
+import torch
 import pandas as pd
 import numpy as np
 from .constants import *
@@ -23,7 +23,7 @@ from .pMHC import pMHC
 import warnings
 from sklearn.model_selection import train_test_split
 
-class TCRpMHCdataset:
+class TCRpMHCdataset(torch.utils.data.Dataset):
     """
     Main class for the TCRpMHCDataset package. This class is designed to take tabular paired data as input and return 
     a cohesive dataset that is designed to capture the many to many nature of TCR and pMHC cross-reactivity. Accepts 
