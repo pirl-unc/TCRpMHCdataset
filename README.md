@@ -36,7 +36,7 @@ pip install .
 from tcrpmhcdataset import TCRpMHCdataset
 # Define a TCR -> pMHC dataset
 deorph_dataset = TCRpMHCdataset(source='tcr', target='pmhc', use_mhc=False, use_pseudo=True, use_cdr3=True, use_both_chains=False)
-deorph_dataset.load('test_data/sampled_paired_data_cleaned.csv')
+deorph_dataset.load_data_from_file('test_data/sampled_paired_data_cleaned.csv')
 
 In [1]: print(deorph_dataset)
 Out[1]: 'TCR:pMHC Dataset of N=6833. Mode:tcr -> pmhc.'
@@ -47,7 +47,7 @@ Out[1]: 'TCR:pMHC Dataset of N=6833. Mode:tcr -> pmhc.'
 from tcrpmhcdataset import TCRpMHCdataset
 # Define a pMHC -> tcr dataset
 design_dataset = TCRpMHCdataset(source='pmhc', target='tcr', use_mhc=False, use_pseudo=True, use_cdr3=True, use_both_chains=False)
-design_dataset.load('test_data/sampled_paired_data_cleaned.csv')
+design_dataset.load_data_from_file('test_data/sampled_paired_data_cleaned.csv')
 pmhc, tcr = design_dataset[0]
 
 In [1]: pmhc
@@ -67,7 +67,7 @@ Out[2]: TCR(cdr3a="None", cdr3b="CSAQDRTSNEQFF",
 from tcrpmhcdataset import TCRpMHCdataset
 # Define a TCR -> pMHC dataset
 design_dataset = TCRpMHCdataset(source='pmhc', target='tcr', use_mhc=False, use_pseudo=True, use_cdr3=True, use_both_chains=False)
-design_dataset.load('test_data/sampled_paired_data_cleaned.csv')
+design_dataset.load_data_from_file('test_data/sampled_paired_data_cleaned.csv')
 
 # Split on Epitope and then pull out a validation set
 train_dataset, test_dataset = design_dataset.split(test_size=0.2, balance_on_allele=True, split_on=['Epitope'])
