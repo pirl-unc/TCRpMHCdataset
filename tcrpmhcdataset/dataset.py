@@ -451,24 +451,24 @@ class TCRpMHCdataset(torch.utils.data.Dataset):
         Returns:
         
         """
-	def _collate_fn(batch):
-	    source_batch, target_batch = tuple(zip(*batch))
+        def _collate_fn(batch):
+            source_batch, target_batch = tuple(zip(*batch))
 
-	    pmhc_list = [(src.peptide, src.pseudo) for src in source_batch] if self.source=='pmhc' else [(trg.peptide, trg.pseudo) for trg in target_batch]
-	    tcr_list = [src.cdr3b for src in source_batch] if self.source=='tcr' else [trg.cdr3b for trg in target_batch]
+            pmhc_list = [src.peptide + ' ' + src.pseudo for src in source_batch] if self.source=='pmhc' else [trg.peptide + ' ' + trg.pseudo for trg in target_batch]
+            tcr_list = [src.cdr3b for src in source_batch] if self.source=='tcr' else [trg.cdr3b for trg in target_batch]
 
-	    # Use the tokenizer to tokenize the data using the appropriate logic
-	    batched_tcrs = tokenizer.tokenize_tcr(tcr_list, padding=True, truncation=True, max_length=25, return_tensors='pt')
-	    batched_pmhcs = tokenizer.tokenize_pmhc(pmhc_list, padding=True, truncation=True, max_length=52, return_tensors='pt')
+            # Use the tokenizer to tokenize the data using the appropriate logic
+            batched_tcrs = tokenizer(tcr_list, padding=True, truncation=True, max_length=25, return_tensors='pt')
+            batched_pmhcs = tokenizer(pmhc_list, padding=True, truncation=True, max_length=52, return_tensors='pt')
 
-	    # Return the batched tensor data in the form BatchEncoding
-	    if self.source == 'pmhc':
-		# Get the labels (cognate sequence)
-		batched_pmhcs['labels'] = batched_tcrs['input_ids']
-		return batched_pmhcs
-	    else:
-		batched_tcrs['labels'] = batched_pmhcs['input_ids']
-		return batched_tcrs
+            # Return the batched tensor data in the form BatchEncoding
+            if self.source == 'pmhc':
+                # Get the labels (cognate sequence)
+                batched_pmhcs['labels'] = batched_tcrs['input_ids']
+                return batched_pmhcs
+            else:
+                batched_tcrs['labels'] = batched_pmhcs['input_ids']
+                return batched_tcrs
 
-	return _collate_fn
+        return _collate_fn
 

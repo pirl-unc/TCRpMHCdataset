@@ -7,6 +7,28 @@ from tcrpmhcdataset.dataset import *
 import pytest
 import os
 import pandas as pd
+import torch
+
+
+class MockTokenizer:
+    """
+    Mock tokenizer for testing collate_fn and get_dataloader.
+    Mimics a HuggingFace-style tokenizer interface.
+    """
+    def __call__(self, text_list, padding=True, truncation=True, max_length=25, return_tensors='pt'):
+        """
+        Mock tokenization - converts strings to simple integer encodings.
+        Returns a dict with 'input_ids' tensor.
+        """
+        encoded = []
+        for text in text_list:
+            text = text or ""
+            # Simple encoding: convert each character to its ASCII value
+            ids = [ord(c) for c in text[:max_length]]
+            # Pad to max_length
+            ids = ids + [0] * (max_length - len(ids))
+            encoded.append(ids)
+        return {'input_ids': torch.tensor(encoded)}
 
 curr_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(curr_dir)
@@ -331,3 +353,108 @@ class TestTCRpMHCdataset:
         test_df['group'] = test_df['CDR3b'] + '_' + test_df['TRBV'] + '_' + test_df['TRBJ']
 
         assert len(set(train_df['group']).intersection(set(test_df['group']))) == 0
+
+    def test_collate_fn_tcr2pmhc(self):
+        """
+        Test the collate function for tcr -> pmhc mode.
+        """
+        self.tcr2pmhc_dataset.load_data_from_file(self.sample_data_path)
+        tokenizer = MockTokenizer()
+        collate_fn = self.tcr2pmhc_dataset.collate_fn(tokenizer)
+
+        # Get a small batch of items
+        batch = [self.tcr2pmhc_dataset[i] for i in range(4)]
+        result = collate_fn(batch)
+
+        # Check that result has expected keys
+        assert 'input_ids' in result
+        assert 'labels' in result
+
+        # Check tensor shapes
+        assert result['input_ids'].shape[0] == 4  # batch size
+        assert result['labels'].shape[0] == 4  # batch size
+
+        # In tcr2pmhc mode, input_ids should be TCRs and labels should be pMHCs
+        assert result['input_ids'].shape[1] == 25  # TCR max_length
+        assert result['labels'].shape[1] == 52  # pMHC max_length
+
+    def test_collate_fn_pmhc2tcr(self):
+        """
+        Test the collate function for pmhc -> tcr mode.
+        """
+        self.pmhc2tcr_dataset.load_data_from_file(self.sample_data_path)
+        tokenizer = MockTokenizer()
+        collate_fn = self.pmhc2tcr_dataset.collate_fn(tokenizer)
+
+        # Get a small batch of items
+        batch = [self.pmhc2tcr_dataset[i] for i in range(4)]
+        result = collate_fn(batch)
+
+        # Check that result has expected keys
+        assert 'input_ids' in result
+        assert 'labels' in result
+
+        # Check tensor shapes
+        assert result['input_ids'].shape[0] == 4  # batch size
+        assert result['labels'].shape[0] == 4  # batch size
+
+        # In pmhc2tcr mode, input_ids should be pMHCs and labels should be TCRs
+        assert result['input_ids'].shape[1] == 52  # pMHC max_length
+        assert result['labels'].shape[1] == 25  # TCR max_length
+
+    def test_get_dataloader_tcr2pmhc(self):
+        """
+        Test the get_dataloader method for tcr -> pmhc mode.
+        """
+        self.tcr2pmhc_dataset.load_data_from_file(self.sample_data_path)
+        tokenizer = MockTokenizer()
+        dataloader = self.tcr2pmhc_dataset.get_dataloader(tokenizer, batch_size=8, shuffle=False)
+
+        # Check that dataloader is correct type
+        assert isinstance(dataloader, torch.utils.data.DataLoader)
+
+        # Get first batch and verify structure
+        batch = next(iter(dataloader))
+        assert 'input_ids' in batch
+        assert 'labels' in batch
+        assert batch['input_ids'].shape[0] == 8
+        assert batch['labels'].shape[0] == 8
+
+    def test_get_dataloader_pmhc2tcr(self):
+        """
+        Test the get_dataloader method for pmhc -> tcr mode.
+        """
+        self.pmhc2tcr_dataset.load_data_from_file(self.sample_data_path)
+        tokenizer = MockTokenizer()
+        dataloader = self.pmhc2tcr_dataset.get_dataloader(tokenizer, batch_size=8, shuffle=False)
+
+        # Check that dataloader is correct type
+        assert isinstance(dataloader, torch.utils.data.DataLoader)
+
+        # Get first batch and verify structure
+        batch = next(iter(dataloader))
+        assert 'input_ids' in batch
+        assert 'labels' in batch
+        assert batch['input_ids'].shape[0] == 8
+        assert batch['labels'].shape[0] == 8
+
+    def test_dataloader_iteration(self):
+        """
+        Test that the dataloader can iterate through multiple batches.
+        """
+        self.tcr2pmhc_dataset.load_data_from_file(self.sample_data_path)
+        tokenizer = MockTokenizer()
+        batch_size = 32
+        dataloader = self.tcr2pmhc_dataset.get_dataloader(tokenizer, batch_size=batch_size, shuffle=False)
+
+        # Count batches and total samples
+        total_samples = 0
+        batch_count = 0
+        for batch in dataloader:
+            batch_count += 1
+            total_samples += batch['input_ids'].shape[0]
+
+        # Verify we processed all samples
+        assert total_samples == len(self.tcr2pmhc_dataset)
+        expected_batches = (len(self.tcr2pmhc_dataset) + batch_size - 1) // batch_size
+        assert batch_count == expected_batches
