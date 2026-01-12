@@ -417,4 +417,58 @@ class TCRpMHCdataset:
         """
         df = self.to_df()
         df.to_csv(path_to_csv, index=False)
+        
+    def get_dataloader(self, tokenizer, batch_size=1, shuffle=False, num_workers=0):
+        """
+        Return a dataloader for the dataset.
+        
+        Args:
+            tokenizer (transformers.PreTrainedTokenizer): The tokenizer to use for the dataset.
+            batch_size (int): The batch size for the dataloader.
+            shuffle (bool): Whether to shuffle the dataset.
+            num_workers (int): The number of workers to use for the dataloader.
+
+        Raises:
+            None
+
+        Returns:
+            dataloader (torch.utils.data.DataLoader): The dataloader for the dataset.
+        """
+        collate_fn = self.collate_fn(tokenizer)
+        return torch.utils.data.DataLoader(self, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers, collate_fn=collate_fn)
+    
+    def collate_fn(self, tokenizer):
+        """
+        Collate function for the dataloader. This function is used to collate the data into a batch.
+        
+        Args:
+            batch (list): A list of tuples of (TCR, pMHC) objects called using the __getitem__.
+            tokenizer (transformers.PreTrainedTokenizer): The tokenizer to use after collating the data.
+
+        Raises:
+            None
+
+        Returns:
+        
+        """
+	def _collate_fn(batch):
+	    source_batch, target_batch = tuple(zip(*batch))
+
+	    pmhc_list = [(src.peptide, src.pseudo) for src in source_batch] if self.source=='pmhc' else [(trg.peptide, trg.pseudo) for trg in target_batch]
+	    tcr_list = [src.cdr3b for src in source_batch] if self.source=='tcr' else [trg.cdr3b for trg in target_batch]
+
+	    # Use the tokenizer to tokenize the data using the appropriate logic
+	    batched_tcrs = tokenizer.tokenize_tcr(tcr_list, padding=True, truncation=True, max_length=25, return_tensors='pt')
+	    batched_pmhcs = tokenizer.tokenize_pmhc(pmhc_list, padding=True, truncation=True, max_length=52, return_tensors='pt')
+
+	    # Return the batched tensor data in the form BatchEncoding
+	    if self.source == 'pmhc':
+		# Get the labels (cognate sequence)
+		batched_pmhcs['labels'] = batched_tcrs['input_ids']
+		return batched_pmhcs
+	    else:
+		batched_tcrs['labels'] = batched_pmhcs['input_ids']
+		return batched_tcrs
+
+	return _collate_fn
 
